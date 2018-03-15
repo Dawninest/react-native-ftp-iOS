@@ -9,3 +9,6 @@ ReactNative NativeModule FTP (iOS only)
 或者可以考虑写个RN的demo啥的，
 
 如果有刚好需要用的同学请在issues留言催促我写使用说明加demo，
+
+
+つづく
