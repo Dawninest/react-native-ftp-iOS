@@ -57,7 +57,7 @@ RCT_EXPORT_MODULE();
  7:transferId : 发送文件的uuid 32位
  8:fileMimeType : other image audio
  9:isUpload : bool
- 10:isSSL : bool
+ 10:isSSL : bool //iOS不支持 ssl
  11:fileSize : 文件大小
  */
 RCT_EXPORT_METHOD(addFtpTask:(NSDictionary *)cmd){
