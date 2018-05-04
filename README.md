@@ -132,16 +132,19 @@ NativeModules.FileTransfer.cancelFtpTask()
 
 在实际使用过程中存在了以下问题我觉得需要额外说明：
 
-1. 上传文件的时候，会把 transferId 拼接到 remoteFilePath 之后，所以这里的 transferId 你可以设置成你打算把文件存服务器上的名字。
-2. 值得再次强调，设置localPath的时候，务必写成 'file:///xxx' ，不然可能会拿不到正确的文件路径。
-3. 若使用Xcode+模拟器的方式进行开发时，因为每一次 cmd + R 都会更新项目的沙盒地址，在测试时如果把 localPath 直接复制的打印出的沙盒地址，可能会出现问题。
-4. 忽然发现，ReactNative 的 FTP 的插件好像只有我这儿一家，还真是受宠若惊。由此可见，FTP可真是太冷门了，还是HTTP大法好
+1. 下载文件的时候，未下载完成的文件会有个后缀 .sim ，下载完成后会去掉，不喜欢这个后缀的话，在 SANFtp.m 的 107 行修改
+2. 上传文件的时候，会把 transferId 拼接到 remoteFilePath 之后，所以这里的 transferId 你可以设置成你打算把文件存服务器上的名字。
+3. ~~值得再次强调，设置localPath的时候，务必写成 'file:///xxx' ，不然可能会拿不到正确的文件路径。~~ 这一条已经更新，现在不必须写 file:// ，为啥要写 file:// 我记得原因时在使用某插件获取文件绝对路径时会被带上。
+4. 若使用Xcode+模拟器的方式进行开发时，因为每一次 cmd + R 都会更新项目的沙盒地址，在测试时如果把 localPath 直接复制的打印出的沙盒地址，可能会出现问题。
+5. 忽然发现，ReactNative 的 FTP 的插件好像只有我这儿一家，还真是受宠若惊。由此可见，FTP可真是太冷门了，还是HTTP大法好
 
 ### todo:
 
-1. 设置 localPath 时，对于不是 'file://' 进行动态判定
+1. ~~设置 localPath 时，对于不是 'file://' 进行动态判定~~ 已经完成
 
-2. localPath 对应的本地文件不存在时，应该给出错误信息，并终止传输任务
+2. ~~localPath 对应的本地文件不存在时，应该给出错误信息，并终止传输任务~~ 已经完成
+
+3. つづく
 
    
 
@@ -149,7 +152,7 @@ NativeModules.FileTransfer.cancelFtpTask()
 
 ### 额外的
 
-写demo的时候本来想找一个公开的FTP文件服务器来写进Demo感觉更有说服力，然后并没有找到[有可使用的请联系我，我会补充demo]
+写demo的时候本来想找一个公开的FTP文件服务器来写进Demo感觉更有说服力，然后并没有找到[~~有可使用的请联系我，我会补充demo ,~~其实有 speedtest.tele2.net 可供测试，端口 21 ]
 
 [iOS-FTP 官方文档](https://developer.apple.com/library/content/samplecode/SimpleFTPSample/Introduction/Intro.html#//apple_ref/doc/uid/DTS40009243-Intro-DontLinkElementID_2) 
 
