@@ -302,7 +302,7 @@ RCT_EXPORT_METHOD(cancelFtpTask:(NSDictionary*)cmd){
 
 //文件传输进度
 - (void)requestsManager:(id<GRRequestsManagerProtocol>)requestsManager didCompletePercent:(float)percent forRequest:(id<GRRequestProtocol>)request{
-  if (percent >= 0 && percent < 1) {
+  if (percent >= 0.01 && percent < 1) {
     NSDictionary *jsonDic = request.requestDic;
     NSString *transferId = [jsonDic objectForKey:@"transferId"];
     NSDictionary *callbackDic = [NSMutableDictionary dictionary];
