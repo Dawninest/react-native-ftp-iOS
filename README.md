@@ -84,8 +84,8 @@ export default class ftpiOSDemo extends Component {
         remoteFilePath: '/', //(绝对路径) ，上传时提供文件夹地址，后带 "/" eg /2016-11-11-1/，下载时提供文件地址(2016-11-11-1/down)
         toAccount: '文件发送对象',// 与FTP传输无关，能在传输监听中拿到，方便后续逻辑处理
         transferId: '23333333xxx',// 与FTP传输无关，能在传输监听中拿到，方便后续逻辑处理
-        fileSize: '233333', // 与FTP传输无关，能在传输监听中拿到，方便后续逻辑处理
-        isSSL: SimConfig.getSimConfig("isFtpSSL"), // iOS不支持ssl ，无用参数，方便与安卓版统一接口
+        fileSize: 233333, // 与FTP传输无关，能在传输监听中拿到，方便后续逻辑处理
+        isSSL: false, // iOS不支持ssl ，无用参数，方便与安卓版统一接口
     };
     NativeModules.FileTransfer.addFtpTask(ftpTask)
   }
@@ -112,11 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });
 
