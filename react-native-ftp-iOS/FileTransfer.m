@@ -62,9 +62,15 @@ RCT_EXPORT_MODULE();
  */
 RCT_EXPORT_METHOD(addFtpTask:(NSDictionary *)cmd){
   dispatch_async(dispatch_get_main_queue(), ^{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory=[paths objectAtIndex:0];//Documents目录
+    NSLog(@"NSDocumentDirectory:%@",documentsDirectory);
+    
     [self initData:cmd];
     SANFtp *ftp = [self getFtpWithCmd:self.cmd];
     //[ftp listWithPath:@""];
+    
+    
     [self addTaskToFtp:ftp cmd:self.cmd];
   });
 }
@@ -143,11 +149,14 @@ RCT_EXPORT_METHOD(cancelFtpTask:(NSDictionary*)cmd){
   NSString *localPath = [jsonDic objectForKey:@"localPath"];
   if ([[localPath substringToIndex:7] isEqualToString:@"file://"]) {
     self.localPath = [localPath substringFromIndex:7];
+    [jsonDic setValue:self.localPath forKey:@"localPath"];
+  } else {
+    self.localPath = localPath;
   }
-  [jsonDic setValue:self.localPath forKey:@"localPath"];
   NSString *remoteFilePath = [jsonDic objectForKey:@"remoteFilePath"];
   self.remoteFilePath = remoteFilePath;
   if (self.isUpload) {
+    //self.remoteFilePath = [NSString stringWithFormat:@"%@",remoteFilePath];
     self.remoteFilePath = [NSString stringWithFormat:@"%@/%@",remoteFilePath,self.transferId];
   }
   [jsonDic setValue:self.remoteFilePath forKey:@"remoteFilePath"];
@@ -229,10 +238,22 @@ RCT_EXPORT_METHOD(cancelFtpTask:(NSDictionary*)cmd){
 
 /*upLoadTask*/
 - (void)uploadTaskStart:(SANFtp*)ftp requestDic:(NSDictionary*)requestDic{
-  [self creatNewFtpToCreateDir];
-  [ftp uploadFileWithlocalPath:self.localPath remotePath:self.remoteFilePath requestDic:requestDic];
-  //[self.pluginResult setKeepCallbackAsBool:YES];
+  if([self localFileExists:[requestDic objectForKey:@"localPath"]]){
+    [self creatNewFtpToCreateDir];
+    [ftp uploadFileWithlocalPath:self.localPath remotePath:self.remoteFilePath requestDic:requestDic];
+  } else {
+    NSDictionary *callbackDic = [NSMutableDictionary dictionary];
+    [callbackDic setValue:@"上传文件不存在" forKey:@"error"];
+    [callbackDic setValue:[requestDic objectForKey:@"transferId"] forKey:@"transferId"];
+    [self sendEventWithName:@"fileTransfer" body:callbackDic];
+  };
 }
+
+- (BOOL)localFileExists:(NSString *)localPath{
+  NSFileManager *flieManger = [NSFileManager defaultManager];
+  return [flieManger fileExistsAtPath:localPath];
+}
+
 - (void)creatNewFtpToCreateDir{
   SANFtp *createDirFtp = [[SANFtp alloc]initWithHostname:self.hostname
                                                 username:self.username
@@ -302,7 +323,7 @@ RCT_EXPORT_METHOD(cancelFtpTask:(NSDictionary*)cmd){
 
 //文件传输进度
 - (void)requestsManager:(id<GRRequestsManagerProtocol>)requestsManager didCompletePercent:(float)percent forRequest:(id<GRRequestProtocol>)request{
-  if (percent >= 0.01 && percent < 1) {
+  if (percent >= 0 && percent < 1) {
     NSDictionary *jsonDic = request.requestDic;
     NSString *transferId = [jsonDic objectForKey:@"transferId"];
     NSDictionary *callbackDic = [NSMutableDictionary dictionary];
